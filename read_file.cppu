@@ -1,0 +1,144 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<stdlib.h>
+#include<cstdlib>
+#include<cstring>
+#include"linked_list_of_curves.h"
+#include"read_file.h"
+#include "hash_table.h"
+#include<iomanip>
+#include"Grid.h"
+#include<random>
+#include<iomanip>
+#include"Functions.h"
+using namespace std;
+
+hash_table* load_hash_table_with_curves(string dataset,hash_table table, Grid gridaki[], int K ) {
+	//ifstream set("dataset0");
+	ifstream set("trajectories_dataset");//auto to arxeio anoigw
+	string word  ;//edw tha vazeis tis lekseis tou dataset
+	int n_c;
+	int numbers = 0 ;
+	int kampules = 0 ;
+
+	table.print();
+	for(int i = 0 ; i < K ; i++){
+		gridaki[i].print_grid();
+	}
+
+
+	int k = 0 ;
+	while(set >> word  ){//oso uparxoun lekseis sto dataset pare mia
+	bool only_digits;//flag gia to an oi lekseis periexoun mono noumera(prosdioristes kampulhs)
+		for (size_t n = 0; n < word.length(); n++){//prwtes duo lekseis kathe kampulhs
+  			if(isdigit(word[n]) ){
+				only_digits = true ;
+			}
+			else if ( !isdigit(word[n]) ){
+				only_digits = false ;
+				break ; 
+			}
+		}
+		if(only_digits == true ){ 
+			numbers++ ; 
+		}
+		string curve;
+		if (numbers == 2 ){// An uparxoun 2 sunexomena noumera shmainei oti ksekinaei kainouria kampulh  
+			numbers = 0 ;
+			//kai afta ta 2 noumera einai o arithmos ths kai o aritmos twn shmeiwn ths
+			//string curve ;
+			bool only_digits; 
+			int arithmos_shmeiwn = stoi(word) ;//edw apothikevete o arithmos trwn shmeiwn ths kampulhs 
+			for(int i = 0 ; i <2*arithmos_shmeiwn; i++ ){//fiakse to string ths kampulhs gnwrizodas ton arithmo twn shmeiwn ths
+				set >> word ;
+				curve.append(word);
+
+			}
+                	//numbers= 0 ;
+			//while continiues we have one new curve as string
+			int number_of_points = arithmos_shmeiwn ;
+			string V;
+			for (int i = 0 ; i <= curve.length(); i ++ ){
+				if (curve[i] == ',' && curve[i+1] == '('){
+					curve.erase(curve.begin() + i );
+				}
+			}
+			string points[2*number_of_points];
+                	long double points_d[2*number_of_points];
+
+			int k = 0 ;
+                	int n = 0 ;
+                	while(curve[n] != '\0' && k < 2*number_of_points && n < curve.length()){
+                        	if(curve[n] == '(' /*|| curve[n] ==',' */){
+                                	n++;
+                                //continue;
+                        	}
+                         	if(isdigit(curve[n]) || curve[n] == '.' || curve[n] == '-'){
+                                	        points[k].push_back(curve[n]);
+                        	}
+                        	else if(curve[n] == ')' || curve[n] == ',' ){
+ //100cout                               << "-----"<<points[k] << endl;
+   					size_t size = 16;
+					points_d[k]  = (long double)stod(points[k],NULL);
+					points[k] = "";
+                                	k++;
+                        	}
+                		n++;
+			}
+
+                	vector<vector <double> > Curve ;//To diplo vector(kampulh) pou tha bei se ena bucket
+                	vector <double> Curve_go_grid ;//to mono vector(kampulh-idio me to apw panw) pou tha gridarisete K fores
+			for (int i= 0 ; i<2*number_of_points ; i+=2){
+                        	vector<double> suntetagmenes ;
+                                	suntetagmenes.push_back(points_d[i]);
+                                	suntetagmenes.push_back(points_d[i+1]);
+					Curve.push_back(suntetagmenes);
+
+					Curve_go_grid.push_back(points_d[i]);
+					Curve_go_grid.push_back(points_d[i+1]);
+			//		cout<< "x:"<<Curve_go_grid[i];
+			//		cout<< "x:"<<Curve_go_grid[i+1];
+			}
+			//Sunarthsh gia na gridaei thn kampulh K fores kai na epistrepsei ton grammiko sundiasmo tou concatanated dianismatos kampulhs
+			long int Hadd = Grid_a_curve_K_times_and_return_riConnation(Curve_go_grid,gridaki,K);
+			//Hash Function- gia na prosdiorisei to bucket pou tha bei h kampulh
+        		int H = table.hash_function(Hadd);
+			//Rikse thn kampulh sto bucket pou eipe h sunarthsh katakermatismou
+			table.add_curve(Curve,H);
+		}
+
+
+	}
+
+
+		table.print();
+		set.close();
+//		return list; 
+}
+
+
+void open_querry_file(string dataset,hash_table table,Grid gridaki[],int K){
+	ifstream set("dataset0");//auto to arxeio anoigw
+        string word  ;//edw tha vazeis tis lekseis tou dataset
+        int numbers = 0 ;
+
+        table.print();
+        for(int i = 0 ; i < K ; i++){
+                gridaki[i].print_grid();
+        }
+
+	while( set >> word ){
+		if (word == ':' ){break;}
+		//int R = word;
+		//cout <<"RRRRRRRRRRRRRRR"<< R ; 
+	}
+	string ena =  set >> word;
+	string duo = set >>word ;
+	cout <<"ena:"<< ena <<"duo :"<< duo ;
+
+
+
+
+}
+

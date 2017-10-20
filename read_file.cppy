@@ -1,0 +1,123 @@
+#include<iostream>
+#include<fstream>
+#include<string>
+#include<stdlib.h>
+#include<cstdlib>
+#define D 25
+#include<cstring>
+#include"linked_list_of_curves.h"
+#include"open_file.h"
+#include "hash_table.h"
+#include<iomanip>
+using namespace std;
+
+Linked_List_C* load_list_with_curves(string dataset,Linked_List_C* list ) {
+	//ifstream set("dataset0");
+	ifstream set("trajectories_dataset");//auto to arxeio anoigw
+	string word  ;
+	int n_c;
+	int numbers = 0 ;
+	int kampules = 0 ;
+
+	while(set >> word){
+	bool only_digits;
+		for (size_t n = 0; n < word.length(); n++){
+  			if(isdigit(word[n]) ){
+				only_digits = true ;
+			}
+			else if ( !isdigit(word[n]) ){
+				only_digits = false ;
+				break ; 
+			}
+		}
+		if(only_digits == true ){ 
+			numbers++ ; 
+		}
+		string curve;
+		if (numbers == 2 ){// An uparxoun 2 sunexomena noumera shmainei oti ksekinaei kainouria kampulh  
+			//kai afta ta 2 noumera einai o arithmos ths kai o aritmos twn shmeiwn ths
+			//string curve ;
+			bool only_digits; 
+			cout << kampules++ ;
+                	//cout << word << endl ;   
+			int arithmos_shmeiwn = stoi(word) ; 
+			for(int i = 0 ; i <2*arithmos_shmeiwn; i++ ){
+				set >> word ;
+				//cout << word << endl;
+				curve.append(word);
+
+			}
+//			cout << curve;
+                	cout<< endl; 
+                	numbers= 0 ;
+	
+//		}
+
+//while continiues we have  one new  curve
+		cout << "we have one new curve";
+		int number_of_points = arithmos_shmeiwn ;
+		//for (int i = 0 ; i <= curve.length();i++){
+                  //      if(curve[i] == '('){    number_of_points++;}
+                //}
+//		cout << curve ;
+		string V;
+		for (int i = 0 ; i <= curve.length(); i ++ ){
+			if (curve[i] == ',' && curve[i+1] == '('){
+				curve.erase(curve.begin() + i );
+			}
+		}
+//		cout << curve ; 
+		string points[2*number_of_points];
+                long double points_d[2*number_of_points];// << setprecision(15);
+                //for(int i = 0 ; i <= 2*number_of_points; i ++){
+		//	points_d[i] ;//>> setprecision(15);
+		//}
+
+		int k = 0 ;
+                int n = 0 ;
+                while(curve[n] != '\0' && k < 2*number_of_points && n < curve.length()){
+                        if(curve[n] == '(' /*|| curve[n] ==',' */){
+                                n++;
+                                //continue;
+                        }
+                         if(isdigit(curve[n]) || curve[n] == '.' || curve[n] == '-'){
+                                        points[k].push_back(curve[n]);
+                                	//cout << points[k];
+					//n++;
+                                        //cout << points[k] ;
+                        }
+                        else if(curve[n] == ')' || curve[n] == ',' ){
+ cout                               << "-----"<<points[k] << endl;
+   				size_t size = 16;
+				points_d[k]  = (long double)strtod(points[k],NULL);
+                                cout << setprecision(16) << points_d[k];
+				points[k] = "";
+                                k++;
+                        }
+                	n++;
+		}
+                cout <<"after while";
+                for(int i = 0 ; i < 2*number_of_points; i++){
+                        cout << points_d[i] << " ";
+                }
+                cout << endl;
+
+                vector<vector <double> > Curve ;
+                for (int i= 0 ; i<2*number_of_points ; i++){
+                        vector<double> suntetagmenes ;
+                                suntetagmenes.push_back(points_d[i]);
+                                Curve.push_back(suntetagmenes);
+                }
+
+                list->Add_curve_on_tail_C(Curve);
+ //               d++;
+}
+
+
+	}	
+//		list->Traverse_and_print_C();
+//		list->Traverse_and_print_C();
+		
+		set.close();
+		return list; 
+}
